@@ -8,11 +8,18 @@
 
 <header>
     <h1><a href="/">Mini Shop</a></h1>
+
     <nav>
         <a href="/">Produits</a> |
         <a href="/cart/">Panier</a> |
         <a href="/orders/create/">Commander</a> |
-        <a href="/admin/">Admin</a>
+
+        {% if user.is_authenticated %}
+            Bonjour, {{ user.username }} |
+            <a href="{% url 'logout' %}?next=/">Se déconnecter</a>
+        {% else %}
+            <a href="{% url 'login' %}">Se connecter</a>
+        {% endif %}
     </nav>
     <hr>
 </header>

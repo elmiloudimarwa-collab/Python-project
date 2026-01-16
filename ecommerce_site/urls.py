@@ -21,5 +21,14 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # pages produits (page d'accueil)
     path('', include('products.urls')),
+
+    # panier
+    path('cart/', include('cart.urls')),
+
+    # commandes
+    path('orders/', include('orders.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

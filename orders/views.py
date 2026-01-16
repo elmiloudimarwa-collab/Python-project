@@ -1,22 +1,27 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .forms import OrderForm
+from .models import OrderItem
+from .forms import OrderCreateForm
+from cart.cart import Cart  # <--- classe Cart que vous avez déjà créée
 
-@login_required
-def checkout(request):
+
+def order_create(request):
+    cart = Cart(request)
     if request.method == "POST":
-        form = OrderForm(request.POST)
+        form = OrderCreateForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
-            order.user = request.user
-            order.total_amount = 0
+            if request.user.is_authenticated:
+                order.user = request.user
             order.save()
-            return redirect("order_success")
+            for item in cart:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item['product'],
+                    price=item['price'],
+                    quantity=item['quantity'],
+                )
+            cart.clear()
+            return render(request, "orders/order_success.html", {"order": order})
     else:
-        form = OrderForm()
-
-    return render(request, "orders/checkout.html", {"form": form})
-
-@login_required
-def order_success(request):
-    return render(request, "orders/success.html")
+        form = OrderCreateForm()
+    return render(request, "orders/order_create.html", {"cart": cart, "form": form})

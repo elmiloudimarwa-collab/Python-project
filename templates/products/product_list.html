@@ -1,18 +1,44 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}Products - My Shop{% endblock %}
 
 {% block content %}
-<h1>Liste des produits</h1>
+<div class="row">
+    <div class="col-lg-12 mb-5">
+        <div class="hero">
+            <h1 class="display-4">Discover Excellence</h1>
+            <p class="lead">Curated products for your digital lifestyle.</p>
+        </div>
+    </div>
+</div>
 
-{% if products %}
-    <ul>
+<div class="row">
     {% for product in products %}
-        <li>
-            <strong>{{ product.name }}</strong> – {{ product.price }} €
-        </li>
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-5">
+        <div class="card h-100">
+            <div style="overflow: hidden;">
+                {% if product.image %}
+                <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}"
+                    style="height: 250px; object-fit: cover;">
+                {% else %}
+                <img class="card-img-top" src="https://via.placeholder.com/250x250?text=No+Image" alt="No Image"
+                    style="height: 250px; object-fit: cover;">
+                {% endif %}
+            </div>
+            <div class="card-body d-flex flex-column">
+                <h4 class="card-title">{{ product.name }}</h4>
+                <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                <div class="mt-auto">
+                    <span class="price-tag">${{ product.price }}</span>
+                    <a href="#" class="btn btn-primary w-100 mt-3">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center">
+        <p>No products available.</p>
+    </div>
     {% endfor %}
-    </ul>
-{% else %}
-    <p>Aucun produit pour le moment.</p>
-{% endif %}
-
+</div>
 {% endblock %}

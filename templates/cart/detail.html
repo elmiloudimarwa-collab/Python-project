@@ -1,6 +1,29 @@
-{% extends "base.html" %}
+<h1>Your Cart</h1>
 
-{% block content %}
-<h2>Panier</h2>
-<p>Page panier de test – ça fonctionne !</p>
-{% endblock %}
+{% if cart.cart %}
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Remove</th>
+    </tr>
+    {% for key, item in cart.cart.items %}
+    <tr>
+        <td>Product {{ key }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td><a href="{% url 'cart_remove' key %}">Remove</a></td>
+    </tr>
+    {% endfor %}
+</table>
+<p>Total: {{ cart.get_total_price }}</p>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+
+<h2>Add Test Products</h2>
+<p>
+    <a href="{% url 'cart_add' 1 %}">Add Product 1</a> |
+    <a href="{% url 'cart_add' 2 %}">Add Product 2</a>
+</p>

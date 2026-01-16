@@ -1,44 +1,303 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Products - My Shop{% endblock %}
+{% block title %}Collection Exclusif - Mini Shop{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-12 mb-5">
-        <div class="hero">
-            <h1 class="display-4">Discover Excellence</h1>
-            <p class="lead">Curated products for your digital lifestyle.</p>
+<!-- Premium Styling encapsulated in this page -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+    rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    /* HIDE THE OLD BASE HEADER */
+    header {
+        display: none !important;
+    }
+
+    :root {
+        --primary-color: #2563eb;
+        --secondary-color: #0f172a;
+        --accent-color: #3b82f6;
+        --card-bg: #ffffff;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+        color: var(--secondary-color);
+        padding-top: 80px;
+        /* Space for fixed navbar */
+    }
+
+    /* Custom Premium Navbar */
+    .premium-navbar {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        padding: 1rem 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1030;
+    }
+
+    .brand-logo {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 1.5rem;
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+        letter-spacing: -0.03em;
+    }
+
+    .nav-link-custom {
+        font-weight: 500;
+        color: #64748b;
+        padding: 0.5rem 1rem;
+        border-radius: 99px;
+        /* Pill shape */
+        transition: all 0.2s ease;
+        text-decoration: none;
+        font-size: 0.95rem;
+    }
+
+    .nav-link-custom:hover,
+    .nav-link-custom.active {
+        color: var(--primary-color);
+        background: rgba(37, 99, 235, 0.08);
+    }
+
+    .btn-login {
+        border: 2px solid #e2e8f0;
+        color: var(--secondary-color);
+        border-radius: 99px;
+        padding: 0.4rem 1.2rem;
+        font-weight: 600;
+        background: transparent;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-login:hover {
+        border-color: var(--secondary-color);
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    .btn {
+        font-family: 'Outfit', sans-serif;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        color: white;
+        padding: 5rem 2rem;
+        border-radius: 1.5rem;
+        margin-bottom: 4rem;
+        box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.15), 0 8px 10px -6px rgba(59, 130, 246, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .hero-title {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+    }
+
+    .hero-text {
+        font-size: 1.25rem;
+        opacity: 0.9;
+        font-weight: 400;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Product Cards */
+    .product-card {
+        background: var(--card-bg);
+        border: none;
+        border-radius: 1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-img-wrapper {
+        position: relative;
+        padding-top: 100%;
+        /* 1:1 Aspect Ratio */
+        overflow: hidden;
+        background: #f8fafc;
+    }
+
+    .card-img-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 2rem;
+        transition: transform 0.5s ease;
+    }
+
+    .product-card:hover .card-img-top {
+        transform: scale(1.08);
+        /* Subtle zoom */
+    }
+
+    .card-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: #0f172a;
+    }
+
+    .card-text {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        flex-grow: 1;
+    }
+
+    .price-tag {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .btn-custom-primary {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-custom-primary:hover {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+</style>
+
+<!-- Premium Navbar Injection -->
+<nav class="premium-navbar">
+    <div class="container d-flex align-items-center justify-content-between">
+        <a class="brand-logo" href="/">
+            <i class="bi bi-bag-fill me-2"></i>Mini Shop
+        </a>
+        <div class="d-none d-md-flex align-items-center gap-3">
+            <a href="/" class="nav-link-custom active">Collection</a>
+            <a href="/cart/" class="nav-link-custom">
+                <i class="bi bi-cart3 me-1"></i>Cart
+            </a>
+            <a href="/orders/create/" class="nav-link-custom">Track Order</a>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            {% if user.is_authenticated %}
+            <span class="text-muted small me-2">Hi, {{ user.username }}</span>
+            <a href="{% url 'logout' %}?next=/" class="btn-login" style="border-width: 1px;">Logout</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-login">Login</a>
+            {% endif %}
         </div>
     </div>
-</div>
+</nav>
 
-<div class="row">
-    {% for product in products %}
-    <div class="col-lg-3 col-md-4 col-sm-6 mb-5">
-        <div class="card h-100">
-            <div style="overflow: hidden;">
-                {% if product.image %}
-                <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}"
-                    style="height: 250px; object-fit: cover;">
-                {% else %}
-                <img class="card-img-top" src="https://via.placeholder.com/250x250?text=No+Image" alt="No Image"
-                    style="height: 250px; object-fit: cover;">
-                {% endif %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="row justify-content-center">
+        <div class="col-12 text-center">
+            <div class="hero-section">
+                <h1 class="display-4 hero-title">Discover Excellence</h1>
+                <p class="hero-text">Curated artifacts for the modern digital lifestyle.</p>
             </div>
-            <div class="card-body d-flex flex-column">
-                <h4 class="card-title">{{ product.name }}</h4>
-                <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                <div class="mt-auto">
-                    <span class="price-tag">${{ product.price }}</span>
-                    <a href="#" class="btn btn-primary w-100 mt-3">Add to Cart</a>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="row g-4"> <!-- g-4 adds gutter spacing -->
+        {% for product in products %}
+        <div class="col-lg-3 col-md-6 col-sm-12">
+            <div class="card product-card">
+                <div class="card-img-wrapper">
+                    {% if product.image %}
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <img class="card-img-top" src="https://via.placeholder.com/400x400/e2e8f0/94a3b8?text=No+Image"
+                        alt="No Image">
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:8 }}</p>
+                    <div class="mt-4 pt-3 border-top">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <span class="text-muted small">Price</span>
+                            <span class="price-tag mb-0">${{ product.price }}</span>
+                        </div>
+                        <a href="#" class="btn btn-custom-primary">Add to Cart</a>
+                    </div>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white rounded-4 shadow-sm">
+                <h3 class="text-muted">No products found</h3>
+                <p>Check back later for new arrivals.</p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="col-12 text-center">
-        <p>No products available.</p>
-    </div>
-    {% endfor %}
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

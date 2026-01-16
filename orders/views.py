@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from .models import OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart  # <--- classe Cart que vous avez déjà créée

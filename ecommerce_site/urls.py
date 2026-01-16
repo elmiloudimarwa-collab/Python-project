@@ -22,6 +22,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+# URLs d’authentification Django (login, logout, etc.)
+    path('accounts/', include('django.contrib.auth.urls')),
+    
     # pages produits (page d'accueil)
     path('', include('products.urls')),
 

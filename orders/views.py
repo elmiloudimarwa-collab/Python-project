@@ -4,6 +4,10 @@ from .models import OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart  # <--- classe Cart que vous avez déjà créée
 
+@login_required
+def order_create(request):
+    cart = Cart(request)
+    ...
 
 def order_create(request):
     cart = Cart(request)

@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Nos Produits - E-Shop{% endblock %}
+
+{% block content %}
+<div class="product-list">
+    <h1>Nos Produits</h1>
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            {% endif %}
+            <h2>{{ product.name }}</h2>
+            <p class="price">{{ product.price }} €</p>
+            <p class="description">{{ product.description }}</p>
+        </div>
+        {% empty %}
+        <p>Aucun produit disponible pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

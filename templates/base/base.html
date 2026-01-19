@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <nav class="navbar">
         <div class="container">
@@ -16,10 +18,10 @@
                 <li><a href="{% url 'products:list' %}">Produits</a></li>
                 <li><a href="{% url 'cart:view' %}">Panier</a></li>
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'orders:list' %}">Mes Commandes</a></li>
-                    <li><a href="{% url 'users:logout' %}">Déconnexion</a></li>
+                <li><a href="{% url 'orders:list' %}">Mes Commandes</a></li>
+                <li><a href="{% url 'users:logout' %}">Déconnexion</a></li>
                 {% else %}
-                    <li><a href="{% url 'users:login' %}">Connexion</a></li>
+                <li><a href="{% url 'users:login' %}">Connexion</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -36,4 +38,5 @@
     <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

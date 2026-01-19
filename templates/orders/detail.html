@@ -1,0 +1,93 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Commande #{{ order.id }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="order-detail-container">
+    <div class="order-header-section">
+        <h1>Commande #{{ order.id }}</h1>
+        <div class="order-status status-{{ order.status }}">
+            {{ order.get_status_display }}
+        </div>
+    </div>
+    
+    <div class="order-detail-grid">
+        <!-- Informations de livraison -->
+        <div class="info-card">
+            <h2>Informations de livraison</h2>
+            <div class="info-content">
+                <p><strong>{{ order.first_name }} {{ order.last_name }}</strong></p>
+                <p>{{ order.address }}</p>
+                <p>{{ order.postal_code }} {{ order.city }}</p>
+                <p>Email : {{ order.email }}</p>
+                <p>Téléphone : {{ order.phone }}</p>
+            </div>
+        </div>
+        
+        <!-- Informations de la commande -->
+        <div class="info-card">
+            <h2>Informations de commande</h2>
+            <div class="info-content">
+                <p><strong>Date :</strong> {{ order.created_at|date:"d/m/Y à H:i" }}</p>
+                <p><strong>Dernière mise à jour :</strong> {{ order.updated_at|date:"d/m/Y à H:i" }}</p>
+                <p><strong>Statut :</strong> {{ order.get_status_display }}</p>
+                <p><strong>Total :</strong> {{ order.total_price }} MAD</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Articles de la commande -->
+    <div class="order-items-section">
+        <h2>Articles commandés</h2>
+        <table class="order-items-table">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr>
+                    <td>
+                        <div class="product-info">
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                            <span>{{ item.product.name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ item.price }} MAD</td>
+                    <td>{{ item.quantity }}</td>
+                    <td><strong>{{ item.get_cost }} MAD</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td><strong>{{ order.total_price }} MAD</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <!-- Actions -->
+    <div class="order-actions">
+        <a href="{% url 'orders:list' %}" class="btn btn-secondary">
+            Retour à mes commandes
+        </a>
+        {% if order.status == 'pending' %}
+        <a href="{% url 'orders:cancel' order.id %}" class="btn btn-danger"
+           onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+            Annuler la commande
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

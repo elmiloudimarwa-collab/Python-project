@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Mes commandes{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+    <h1>Mes commandes</h1>
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Commande #{{ order.id }}</h3>
+                        <p class="order-date">{{ order.created_at|date:"d/m/Y à H:i" }}</p>
+                    </div>
+                    <div class="order-status status-{{ order.status }}">
+                        {{ order.get_status_display }}
+                    </div>
+                </div>
+                
+                <div class="order-body">
+                    <div class="order-info">
+                        <p><strong>Total :</strong> {{ order.total_price }} MAD</p>
+                        <p><strong>Articles :</strong> {{ order.items.count }}</p>
+                    </div>
+                    
+                    <div class="order-items-preview">
+                        {% for item in order.items.all|slice:":3" %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-thumb">
+                        {% endfor %}
+                        {% if order.items.count > 3 %}
+                            <span class="more-items">+{{ order.items.count|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="order-actions">
+                    <a href="{% url 'orders:detail' order.id %}" class="btn btn-secondary">
+                        Voir les détails
+                    </a>
+                    {% if order.status == 'pending' %}
+                    <a href="{% url 'orders:cancel' order.id %}" class="btn btn-danger" 
+                       onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+                        Annuler
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>Vous n'avez pas encore de commandes.</p>
+            <a href="{% url 'products:list' %}" class="btn btn-primary">
+                Découvrir nos produits
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

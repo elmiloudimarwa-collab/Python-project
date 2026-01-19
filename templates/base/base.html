@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Shop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">E-Shop</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'products:list' %}">Produits</a></li>
+                <li><a href="{% url 'cart:view' %}">Panier</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'orders:list' %}">Mes Commandes</a></li>
+                    <li><a href="{% url 'users:logout' %}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{% url 'users:login' %}">Connexion</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 E-Shop</p>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

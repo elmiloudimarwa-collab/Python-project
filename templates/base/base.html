@@ -6,22 +6,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}E-Shop{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
+
+    <!-- Toast Notification Styles -->
+    <style>
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 3s forwards;
+            min-width: 280px;
+            max-width: 400px;
+        }
+
+        .toast-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .toast-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .toast-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .toast-info {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        }
+
+        .toast-icon {
+            font-size: 1.25rem;
+        }
+
+        .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.25rem;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="toast toast-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+            <span class="toast-icon">
+                {% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}✕{% elif message.tags == 'warning'
+                %}⚠{% else %}ℹ{% endif %}
+            </span>
+            <span>{{ message }}</span>
+            <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
     <nav class="navbar">
         <div class="container">
-            <a href="/" class="logo">E-Shop</a>
+            <a href="/" class="logo">🛒 E-Shop</a>
             <ul class="nav-links">
                 <li><a href="{% url 'products:list' %}">Produits</a></li>
-                <li><a href="{% url 'cart:view' %}">Panier</a></li>
+                <li><a href="{% url 'cart:cart_detail' %}">Panier <span class="badge">{{ cart_total_items|default:0 }}</span></a></li>
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'orders:list' %}">Mes Commandes</a></li>
-                <li><a href="{% url 'users:logout' %}">Déconnexion</a></li>
+                <li><a href="{% url 'accounts:logout' %}">Déconnexion</a></li>
                 {% else %}
-                <li><a href="{% url 'users:login' %}">Connexion</a></li>
+                <li><a href="{% url 'accounts:login' %}">Connexion</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -32,10 +134,48 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 E-Shop</p>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>E-Shop</h3>
+                    <p>Votre destination pour les meilleurs produits. Qualité et satisfaction garanties.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="{% url 'products:list' %}">Produits</a></li>
+                        <li><a href="{% url 'cart:cart_detail' %}">Panier</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'orders:list' %}">Commandes</a></li>
+                        {% else %}
+                        <li><a href="{% url 'accounts:login' %}">Connexion</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li>Email: support@eshop.com</li>
+                        <li>Tél: +212 600 000 000</li>
+                        <li>Adresse: Rabat, Maroc</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 E-Shop. Tous droits réservés.</p>
+            </div>
+        </div>
     </footer>
 
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // Auto-remove toasts after animation
+        setTimeout(() => {
+            document.querySelectorAll('.toast').forEach(toast => {
+                toast.remove();
+            });
+        }, 3500);
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 

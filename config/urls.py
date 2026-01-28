@@ -25,6 +25,7 @@ urlpatterns = [
     path('cart/', include('cart.urls')),
     path('orders/', include('orders.urls')),  # Ajouter cette ligne
     path('accounts/', include('accounts.urls')),
+    path('', include('products.urls')), # Redirect root to products
 ]
 
 if settings.DEBUG:

@@ -1,93 +1,138 @@
 {% extends 'base/base.html' %}
-{% load static %}
 
-{% block title %}Commande #{{ order.id }}{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/orders.css' %}">
-{% endblock %}
+{% block title %}Commande #{{ order.id }} - E-Shop{% endblock %}
 
 {% block content %}
-<div class="order-detail-container">
-    <div class="order-header-section">
-        <h1>Commande #{{ order.id }}</h1>
-        <div class="order-status status-{{ order.status }}">
-            {{ order.get_status_display }}
+<div style="max-width: 900px; margin: 2rem auto;">
+    <!-- Back Link -->
+    <a href="{% url 'orders:list' %}"
+        style="color: #666; font-size: 0.9rem; text-decoration: none; display: inline-block; margin-bottom: 1rem;">
+        ← Retour à mes commandes
+    </a>
+
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2.5rem; color: var(--primary-color);">Commande #{{ order.id }}</h1>
+        <div style="display: flex; gap: 0.75rem;">
+            {% if order.payment_status == 'paid' %}
+            <span
+                style="background: #d4edda; color: #155724; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500;">
+                💳 Payé
+            </span>
+            {% else %}
+            <span
+                style="background: #fff3cd; color: #856404; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: 500;">
+                ⏳ Paiement en attente
+            </span>
+            {% endif %}
+
+            {% if order.status == 'pending' %}
+            <span
+                style="background: #fff3cd; color: #856404; padding: 0.75rem 1.25rem; border-radius: 20px; font-weight: 500;">
+                En attente
+            </span>
+            {% elif order.status == 'delivered' %}
+            <span
+                style="background: #d4edda; color: #155724; padding: 0.75rem 1.25rem; border-radius: 20px; font-weight: 500;">
+                ✓ Livrée
+            </span>
+            {% elif order.status == 'cancelled' %}
+            <span
+                style="background: #f8d7da; color: #721c24; padding: 0.75rem 1.25rem; border-radius: 20px; font-weight: 500;">
+                ✗ Annulée
+            </span>
+            {% else %}
+            <span
+                style="background: #cce5ff; color: #004085; padding: 0.75rem 1.25rem; border-radius: 20px; font-weight: 500;">
+                {{ order.get_status_display }}
+            </span>
+            {% endif %}
         </div>
     </div>
-    
-    <div class="order-detail-grid">
-        <!-- Informations de livraison -->
-        <div class="info-card">
-            <h2>Informations de livraison</h2>
-            <div class="info-content">
-                <p><strong>{{ order.first_name }} {{ order.last_name }}</strong></p>
-                <p>{{ order.address }}</p>
-                <p>{{ order.postal_code }} {{ order.city }}</p>
-                <p>Email : {{ order.email }}</p>
-                <p>Téléphone : {{ order.phone }}</p>
+
+    <!-- Info Cards Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Shipping Info -->
+        <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); padding: 1.5rem;">
+            <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--primary-color);">📍 Adresse de livraison
+            </h2>
+            <p style="font-weight: 500; margin-bottom: 0.5rem;">{{ order.first_name }} {{ order.last_name }}</p>
+            <p style="color: #666; margin-bottom: 0.25rem;">{{ order.address }}</p>
+            <p style="color: #666; margin-bottom: 1rem;">{{ order.postal_code }} {{ order.city }}</p>
+            <p style="color: #666; font-size: 0.9rem;">📧 {{ order.email }}</p>
+            <p style="color: #666; font-size: 0.9rem;">📞 {{ order.phone }}</p>
+        </div>
+
+        <!-- Order Info -->
+        <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); padding: 1.5rem;">
+            <h2 style="font-size: 1.25rem; margin-bottom: 1rem; color: var(--primary-color);">📋 Détails</h2>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: #666;">Date de commande</span>
+                <span style="font-weight: 500;">{{ order.created_at|date:"d/m/Y à H:i" }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: #666;">Méthode de paiement</span>
+                <span style="font-weight: 500;">💳 Carte bancaire</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span style="color: #666;">Nombre d'articles</span>
+                <span style="font-weight: 500;">{{ order.items.count }}</span>
+            </div>
+            <div
+                style="display: flex; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #eee; margin-top: 1rem;">
+                <span style="font-size: 1.1rem; font-weight: 500;">Total</span>
+                <span style="font-size: 1.25rem; font-weight: bold; color: var(--accent-color);">{{ order.total_price }}
+                    €</span>
             </div>
         </div>
-        
-        <!-- Informations de la commande -->
-        <div class="info-card">
-            <h2>Informations de commande</h2>
-            <div class="info-content">
-                <p><strong>Date :</strong> {{ order.created_at|date:"d/m/Y à H:i" }}</p>
-                <p><strong>Dernière mise à jour :</strong> {{ order.updated_at|date:"d/m/Y à H:i" }}</p>
-                <p><strong>Statut :</strong> {{ order.get_status_display }}</p>
-                <p><strong>Total :</strong> {{ order.total_price }} MAD</p>
+    </div>
+
+    <!-- Order Items -->
+    <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); overflow: hidden;">
+        <div style="padding: 1.5rem; border-bottom: 1px solid #eee;">
+            <h2 style="font-size: 1.25rem; color: var(--primary-color); margin: 0;">🛒 Articles commandés</h2>
+        </div>
+
+        {% for item in order.items.all %}
+        <div style="display: flex; align-items: center; padding: 1.5rem; border-bottom: 1px solid #eee; gap: 1.5rem;">
+            {% if item.product.image_url %}
+            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}"
+                style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+            {% else %}
+            <div
+                style="width: 80px; height: 80px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #aaa;">
+                No img
+            </div>
+            {% endif %}
+
+            <div style="flex-grow: 1;">
+                <h4 style="margin-bottom: 0.25rem;">{{ item.product.name }}</h4>
+                <p style="color: #666; font-size: 0.9rem;">{{ item.price }} € × {{ item.quantity }}</p>
+            </div>
+
+            <div style="font-size: 1.25rem; font-weight: bold; color: var(--accent-color);">
+                {{ item.get_cost }} €
             </div>
         </div>
+        {% endfor %}
+
+        <!-- Total -->
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #f9f9f9;">
+            <span style="font-size: 1.25rem; font-weight: 500;">Total</span>
+            <span style="font-size: 1.75rem; font-weight: bold; color: var(--accent-color);">{{ order.total_price }}
+                €</span>
+        </div>
     </div>
-    
-    <!-- Articles de la commande -->
-    <div class="order-items-section">
-        <h2>Articles commandés</h2>
-        <table class="order-items-table">
-            <thead>
-                <tr>
-                    <th>Produit</th>
-                    <th>Prix unitaire</th>
-                    <th>Quantité</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in order.items.all %}
-                <tr>
-                    <td>
-                        <div class="product-info">
-                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                            <span>{{ item.product.name }}</span>
-                        </div>
-                    </td>
-                    <td>{{ item.price }} MAD</td>
-                    <td>{{ item.quantity }}</td>
-                    <td><strong>{{ item.get_cost }} MAD</strong></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr class="total-row">
-                    <td colspan="3"><strong>Total</strong></td>
-                    <td><strong>{{ order.total_price }} MAD</strong></td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-    
+
     <!-- Actions -->
-    <div class="order-actions">
-        <a href="{% url 'orders:list' %}" class="btn btn-secondary">
-            Retour à mes commandes
-        </a>
-        {% if order.status == 'pending' %}
-        <a href="{% url 'orders:cancel' order.id %}" class="btn btn-danger"
-           onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+    {% if order.status == 'pending' %}
+    <div style="margin-top: 2rem; text-align: right;">
+        <a href="{% url 'orders:cancel' order.id %}" class="btn btn-danger" style="padding: 1rem 2rem;"
+            onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
             Annuler la commande
         </a>
-        {% endif %}
     </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1,67 +1,106 @@
 {% extends 'base/base.html' %}
-{% load static %}
 
-{% block title %}Mes commandes{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/orders.css' %}">
-{% endblock %}
+{% block title %}Mes Commandes - E-Shop{% endblock %}
 
 {% block content %}
-<div class="orders-container">
-    <h1>Mes commandes</h1>
-    
+<div style="max-width: 900px; margin: 2rem auto;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem; color: var(--primary-color);">Mes Commandes</h1>
+
     {% if orders %}
-        <div class="orders-list">
-            {% for order in orders %}
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <h3>Commande #{{ order.id }}</h3>
-                        <p class="order-date">{{ order.created_at|date:"d/m/Y à H:i" }}</p>
-                    </div>
-                    <div class="order-status status-{{ order.status }}">
-                        {{ order.get_status_display }}
-                    </div>
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        {% for order in orders %}
+        <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); overflow: hidden;">
+            <!-- Order Header -->
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #eee; background: #f9f9f9;">
+                <div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem; color: var(--primary-color);">
+                        Commande #{{ order.id }}
+                    </h3>
+                    <p style="color: #666; font-size: 0.9rem;">{{ order.created_at|date:"d/m/Y à H:i" }}</p>
                 </div>
-                
-                <div class="order-body">
-                    <div class="order-info">
-                        <p><strong>Total :</strong> {{ order.total_price }} MAD</p>
-                        <p><strong>Articles :</strong> {{ order.items.count }}</p>
-                    </div>
-                    
-                    <div class="order-items-preview">
-                        {% for item in order.items.all|slice:":3" %}
-                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-thumb">
-                        {% endfor %}
-                        {% if order.items.count > 3 %}
-                            <span class="more-items">+{{ order.items.count|add:"-3" }}</span>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="order-actions">
-                    <a href="{% url 'orders:detail' order.id %}" class="btn btn-secondary">
-                        Voir les détails
-                    </a>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    {% if order.payment_status == 'paid' %}
+                    <span
+                        style="background: #d4edda; color: #155724; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                        💳 Payé
+                    </span>
+                    {% else %}
+                    <span
+                        style="background: #fff3cd; color: #856404; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500;">
+                        ⏳ En attente
+                    </span>
+                    {% endif %}
+
                     {% if order.status == 'pending' %}
-                    <a href="{% url 'orders:cancel' order.id %}" class="btn btn-danger" 
-                       onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
-                        Annuler
-                    </a>
+                    <span
+                        style="background: #fff3cd; color: #856404; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">
+                        En attente
+                    </span>
+                    {% elif order.status == 'processing' %}
+                    <span
+                        style="background: #cce5ff; color: #004085; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">
+                        En traitement
+                    </span>
+                    {% elif order.status == 'shipped' %}
+                    <span
+                        style="background: #d1ecf1; color: #0c5460; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">
+                        Expédiée
+                    </span>
+                    {% elif order.status == 'delivered' %}
+                    <span
+                        style="background: #d4edda; color: #155724; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">
+                        Livrée
+                    </span>
+                    {% elif order.status == 'cancelled' %}
+                    <span
+                        style="background: #f8d7da; color: #721c24; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem;">
+                        Annulée
+                    </span>
                     {% endif %}
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Order Body -->
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="color: #666; margin-bottom: 0.5rem;">
+                            <strong>{{ order.items.count }}</strong> article{% if order.items.count > 1 %}s{% endif %}
+                        </p>
+                        <p style="font-size: 1.5rem; font-weight: bold; color: var(--accent-color);">
+                            {{ order.total_price }} €
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="{% url 'orders:detail' order.id %}" class="btn btn-primary"
+                            style="padding: 0.75rem 1.5rem;">
+                            Voir détails
+                        </a>
+                        {% if order.status == 'pending' %}
+                        <a href="{% url 'orders:cancel' order.id %}" class="btn btn-danger"
+                            style="padding: 0.75rem 1.5rem;"
+                            onclick="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?')">
+                            Annuler
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
+        {% endfor %}
+    </div>
     {% else %}
-        <div class="empty-state">
-            <p>Vous n'avez pas encore de commandes.</p>
-            <a href="{% url 'products:list' %}" class="btn btn-primary">
-                Découvrir nos produits
-            </a>
-        </div>
+    <!-- Empty State -->
+    <div
+        style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); padding: 4rem 2rem; text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">📦</div>
+        <h2 style="font-size: 1.75rem; margin-bottom: 1rem; color: var(--primary-color);">Aucune commande</h2>
+        <p style="color: #666; margin-bottom: 2rem;">Vous n'avez pas encore passé de commande.</p>
+        <a href="{% url 'products:list' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+            Découvrir nos produits
+        </a>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

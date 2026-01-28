@@ -1,106 +1,128 @@
-{% extends 'base/base.html' %}
-{% load static %}
+{% extends "base/base.html" %}
 
-{% block title %}Finaliser la commande{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/orders.css' %}">
-{% endblock %}
+{% block title %}Paiement - E-Shop{% endblock %}
 
 {% block content %}
-<div class="checkout-container">
-    <h1>Finaliser votre commande</h1>
-    
-    <div class="checkout-grid">
-        <!-- Formulaire de livraison -->
-        <div class="delivery-form">
-            <h2>Informations de livraison</h2>
-            
-            <form method="post">
+<div style="max-width: 800px; margin: 2rem auto;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem; color: var(--primary-color);">Finaliser la commande</h1>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Billing Information -->
+        <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); padding: 2rem;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary-color);">Informations de livraison
+            </h2>
+
+            <form method="post" id="checkout-form">
                 {% csrf_token %}
-                
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        <p>Veuillez corriger les erreurs ci-dessous :</p>
-                        {{ form.errors }}
-                    </div>
+
+                {% for field in form %}
+                {% if 'card' not in field.name %}
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <p style="color: var(--danger-color); font-size: 0.9rem; margin-top: 0.5rem;">{{ field.errors.0 }}
+                    </p>
+                    {% endif %}
+                </div>
                 {% endif %}
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.first_name.id_for_label }}">Prénom *</label>
-                        {{ form.first_name }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.last_name.id_for_label }}">Nom *</label>
-                        {{ form.last_name }}
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email *</label>
-                    {{ form.email }}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.address.id_for_label }}">Adresse *</label>
-                    {{ form.address }}
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="{{ form.postal_code.id_for_label }}">Code postal *</label>
-                        {{ form.postal_code }}
-                    </div>
-                    <div class="form-group">
-                        <label for="{{ form.city.id_for_label }}">Ville *</label>
-                        {{ form.city }}
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.phone.id_for_label }}">Téléphone *</label>
-                    {{ form.phone }}
-                </div>
-                
-                <button type="submit" class="btn btn-primary btn-large">
-                    Confirmer la commande
-                </button>
+                {% endfor %}
             </form>
         </div>
-        
-        <!-- Récapitulatif de la commande -->
-        <div class="order-summary">
-            <h2>Récapitulatif</h2>
-            
-            <div class="cart-items">
-                {% for item in cart %}
-                <div class="cart-item">
-                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                    <div class="item-details">
-                        <h4>{{ item.product.name }}</h4>
-                        <p>Quantité : {{ item.quantity }}</p>
-                        <p class="price">{{ item.total_price }} MAD</p>
-                    </div>
-                </div>
-                {% endfor %}
+
+        <!-- Payment Information -->
+        <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); padding: 2rem;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary-color);">
+                💳 Paiement par carte
+            </h2>
+
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                    {{ form.card_number.label }}
+                </label>
+                {{ form.card_number }}
+                {% if form.card_number.errors %}
+                <p style="color: var(--danger-color); font-size: 0.9rem; margin-top: 0.5rem;">{{ form.card_number.errors.0 }}</p>
+                {% endif %}
             </div>
-            
-            <div class="summary-total">
-                <div class="total-line">
-                    <span>Sous-total :</span>
-                    <span>{{ cart.get_total_price }} MAD</span>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                        {{ form.card_expiry.label }}
+                    </label>
+                    {{ form.card_expiry }}
+                    {% if form.card_expiry.errors %}
+                    <p style="color: var(--danger-color); font-size: 0.9rem; margin-top: 0.5rem;">{{ form.card_expiry.errors.0 }}</p>
+                    {% endif %}
                 </div>
-                <div class="total-line">
-                    <span>Livraison :</span>
-                    <span>Gratuite</span>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333;">
+                        {{ form.card_cvv.label }}
+                    </label>
+                    {{ form.card_cvv }}
+                    {% if form.card_cvv.errors %}
+                    <p style="color: var(--danger-color); font-size: 0.9rem; margin-top: 0.5rem;">{{ form.card_cvv.errors.0 }}</p>
+                    {% endif %}
                 </div>
-                <div class="total-line total">
-                    <strong>Total :</strong>
-                    <strong>{{ cart.get_total_price }} MAD</strong>
-                </div>
+            </div>
+
+            <div
+                style="margin-top: 1.5rem; padding: 1rem; background: #f0f8ff; border-radius: 8px; border-left: 3px solid var(--accent-color);">
+                <p style="font-size: 0.9rem; color: #666; margin: 0;">
+                    🔒 Transaction sécurisée - Vos données sont protégées
+                </p>
             </div>
         </div>
     </div>
+
+    <!-- Order Summary & Submit -->
+    <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-md); padding: 2rem; margin-top: 2rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary-color);">Récapitulatif</h2>
+
+        <div style="margin-bottom: 1.5rem;">
+            {% for item in cart %}
+            <div
+                style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid #eee;">
+                <span>{{ item.product.name }} × {{ item.quantity }}</span>
+                <span style="font-weight: 500;">{{ item.total_price }} €</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 2px solid #eee;">
+            <h3 style="font-size: 1.5rem; color: var(--primary-color);">Total</h3>
+            <p style="font-size: 2rem; font-weight: bold; color: var(--accent-color);">{{ cart.get_total_price }} €</p>
+        </div>
+
+        <button type="submit" form="checkout-form" class="btn btn-success"
+            style="width: 100%; padding: 1.25rem; font-size: 1.2rem; margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <span>🔒</span> Payer {{ cart.get_total_price }} €
+        </button>
+
+        <a href="{% url 'cart:cart_detail' %}"
+            style="display: block; text-align: center; margin-top: 1rem; color: #666; text-decoration: none;">
+            ← Retour au panier
+        </a>
+    </div>
 </div>
+
+<style>
+    input.form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+    }
+
+    input.form-control:focus {
+        outline: none;
+        border-color: var(--accent-color);
+    }
+</style>
 {% endblock %}

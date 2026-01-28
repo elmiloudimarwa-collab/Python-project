@@ -1,34 +1,85 @@
-{% extends "base.html" %}
-{% block title %}Panier{% endblock %}
+{% extends "base/base.html" %}
+
+{% block title %}Panier - E-Shop{% endblock %}
+
 {% block content %}
-<h2>Votre panier</h2>
+<div style="max-width: 900px; margin: 2rem auto;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 2rem; color: var(--primary-color);">Votre Panier</h1>
 
-<table>
-    <tr>
-        <th>Produit</th>
-        <th>Quantité</th>
-        <th>Prix</th>
-        <th>Total</th>
-        <th></th>
-    </tr>
-    {% for item in cart_items %}
-    <tr>
-        <td>{{ item.product.name }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.price }} €</td>
-        <td>{{ item.subtotal }} €</td>
-        <td>
-            <a href="{% url 'cart:remove_from_cart' item.product.id %}">Supprimer</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">Panier vide.</td></tr>
-    {% endfor %}
-</table>
+    {% if cart_items %}
+    <!-- Cart Items -->
+    <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+        {% for item in cart_items %}
+        <div style="display: flex; align-items: center; padding: 1.5rem; border-bottom: 1px solid #eee; gap: 1.5rem;">
+            <!-- Product Image -->
+            <div style="flex-shrink: 0;">
+                {% if item.product.image_url %}
+                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}"
+                    style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                {% else %}
+                <div
+                    style="width: 100px; height: 100px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #aaa;">
+                    No Image
+                </div>
+                {% endif %}
+            </div>
 
-<p>Total : {{ cart_total }} €</p>
+            <!-- Product Info -->
+            <div style="flex-grow: 1;">
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">
+                    <a href="{% url 'products:detail' item.product.id %}"
+                        style="color: var(--primary-color); text-decoration: none;">
+                        {{ item.product.name }}
+                    </a>
+                </h3>
+                <p style="color: #666; font-size: 0.95rem;">Prix unitaire: {{ item.price }} €</p>
+                <p style="color: #666; font-size: 0.95rem;">Quantité: {{ item.quantity }}</p>
+            </div>
 
-{% if cart_items %}
-    <a href="{% url 'orders:checkout' %}">Passer la commande</a>
-{% endif %}
+            <!-- Subtotal & Remove -->
+            <div style="text-align: right; flex-shrink: 0;">
+                <p style="font-size: 1.5rem; font-weight: bold; color: var(--accent-color); margin-bottom: 1rem;">
+                    {{ item.subtotal }} €
+                </p>
+                <a href="{% url 'cart:remove_from_cart' item.product.id %}" class="btn btn-danger"
+                    style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                    Supprimer
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Cart Summary -->
+    <div style="background: white; border-radius: 12px; box-shadow: var(--shadow-md); padding: 2rem;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid #eee;">
+            <h2 style="font-size: 1.5rem; color: var(--primary-color);">Total</h2>
+            <p style="font-size: 2rem; font-weight: bold; color: var(--accent-color);">{{ cart_total }} €</p>
+        </div>
+
+        <a href="{% url 'orders:create' %}" class="btn btn-success"
+            style="width: 100%; padding: 1.25rem; font-size: 1.2rem; text-align: center; display: block; text-decoration: none;">
+            Passer la commande
+        </a>
+
+        <a href="{% url 'products:list' %}"
+            style="display: block; text-align: center; margin-top: 1rem; color: #666; text-decoration: none;">
+            ← Continuer mes achats
+        </a>
+    </div>
+
+    {% else %}
+    <!-- Empty Cart -->
+    <div
+        style="background: white; border-radius: 12px; box-shadow: var(--shadow-sm); padding: 4rem 2rem; text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🛒</div>
+        <h2 style="font-size: 1.75rem; margin-bottom: 1rem; color: var(--primary-color);">Votre panier est vide</h2>
+        <p style="color: #666; margin-bottom: 2rem;">Il est temps de le remplir avec nos produits !</p>
+        <a href="{% url 'products:list' %}" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem;">
+            Découvrir nos produits
+        </a>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

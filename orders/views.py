@@ -22,6 +22,8 @@ def order_create(request):
             order = form.save(commit=False)
             order.user = request.user
             order.total_price = cart.get_total_price()
+            order.payment_method = 'card'
+            order.payment_status = 'paid'  # Auto-accept for experimental purposes
             order.save()
             
             # Créer les items de la commande

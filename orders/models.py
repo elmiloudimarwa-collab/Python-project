@@ -39,6 +39,30 @@ class Order(models.Model):
         verbose_name="Prix total"
     )
     
+    PAYMENT_METHOD_CHOICES = [
+        ('card', 'Carte bancaire'),
+    ]
+    
+    PAYMENT_STATUS_CHOICES = [
+        ('pending', 'En attente'),
+        ('paid', 'Payé'),
+        ('failed', 'Échoué'),
+    ]
+    
+    payment_method = models.CharField(
+        max_length=20,
+        choices=PAYMENT_METHOD_CHOICES,
+        default='card',
+        verbose_name="Méthode de paiement"
+    )
+    
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default='pending',
+        verbose_name="Statut du paiement"
+    )
+    
     class Meta:
         ordering = ['-created_at']
         verbose_name = "Commande"
